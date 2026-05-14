@@ -9,9 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RulesRouteImport } from './routes/rules'
+import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as FractionsRouteImport } from './routes/fractions'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HolidaysRoute = HolidaysRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FractionsRoute = FractionsRouteImport.update({
   id: '/fractions',
   path: '/fractions',
@@ -26,31 +38,53 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
+  '/holidays': typeof HolidaysRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
+  '/holidays': typeof HolidaysRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
+  '/holidays': typeof HolidaysRoute
+  '/rules': typeof RulesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fractions'
+  fullPaths: '/' | '/fractions' | '/holidays' | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fractions'
-  id: '__root__' | '/' | '/fractions'
+  to: '/' | '/fractions' | '/holidays' | '/rules'
+  id: '__root__' | '/' | '/fractions' | '/holidays' | '/rules'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FractionsRoute: typeof FractionsRoute
+  HolidaysRoute: typeof HolidaysRoute
+  RulesRoute: typeof RulesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/holidays': {
+      id: '/holidays'
+      path: '/holidays'
+      fullPath: '/holidays'
+      preLoaderRoute: typeof HolidaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fractions': {
       id: '/fractions'
       path: '/fractions'
@@ -71,6 +105,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FractionsRoute: FractionsRoute,
+  HolidaysRoute: HolidaysRoute,
+  RulesRoute: RulesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
