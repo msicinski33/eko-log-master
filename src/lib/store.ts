@@ -20,6 +20,8 @@ export type Rule = {
   color?: string;
   // recurring
   dayOfWeek?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Optional multi-day support; if set, takes precedence over dayOfWeek. */
+  daysOfWeek?: (1 | 2 | 3 | 4 | 5 | 6)[];
   recurrence?: Recurrence;
   startDate?: string; // ISO yyyy-MM-dd
   // manual

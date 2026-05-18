@@ -138,7 +138,7 @@ function RulesPage() {
                   </TableCell>
                   <TableCell className="text-sm">
                     {r.mode === "recurring"
-                      ? `${DAYS.find((d) => d.value === r.dayOfWeek)?.label ?? "?"} • co ${r.recurrence?.replace("w", " tyg.")} • od ${r.startDate ? format(parseISO(r.startDate), "d MMM yyyy", { locale: pl }) : "?"}`
+                      ? `${((r.daysOfWeek && r.daysOfWeek.length > 0) ? r.daysOfWeek : (r.dayOfWeek ? [r.dayOfWeek] : [])).map((d) => DAYS.find((x) => x.value === d)?.label.slice(0, 3) ?? "?").join(", ")} • co ${r.recurrence?.replace("w", " tyg.")} • od ${r.startDate ? format(parseISO(r.startDate), "d MMM yyyy", { locale: pl }) : "?"}`
                       : `${r.dates?.length ?? 0} dat`}
                   </TableCell>
                   <TableCell className="font-mono">{countOccurrencesThisYear(r, overrides)}</TableCell>
@@ -177,7 +177,7 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
   const [name, setName] = useState("");
   const [segment, setSegment] = useState<Segment>("residential");
   const [mode, setMode] = useState<Rule["mode"]>("recurring");
-  const [dayOfWeek, setDayOfWeek] = useState<Rule["dayOfWeek"]>(1);
+  const [daysOfWeek, setDaysOfWeek] = useState<NonNullable<Rule["daysOfWeek"]>>([1]);
   const [recurrence, setRecurrence] = useState<Recurrence>("1w");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [manualDates, setManualDates] = useState<Date[]>([]);
@@ -199,16 +199,14 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
     };
     if (mode === "recurring") {
       if (!startDate) return toast.error("Wybierz datę startową");
+      if (daysOfWeek.length === 0) return toast.error("Wybierz co najmniej jeden dzień tygodnia");
       const sd = new Date(startDate);
-      const desired = dayOfWeek!;
-      const current = sd.getDay() === 0 ? 7 : sd.getDay();
-      if (current !== desired) {
-        toast.warning("Data startowa nie pasuje do wybranego dnia tygodnia — będzie wyrównana.");
-      }
       onAdd({
         ...baseRule,
         mode: "recurring",
-        dayOfWeek, recurrence, startDate: fmtISO(sd),
+        daysOfWeek: [...daysOfWeek].sort((a, b) => a - b) as Rule["daysOfWeek"],
+        recurrence,
+        startDate: fmtISO(sd),
       });
     } else {
       if (manualDates.length === 0) return toast.error("Zaznacz co najmniej jedną datę");
@@ -291,15 +289,37 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
           </TabsList>
 
           <TabsContent value="recurring" className="mt-3">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1fr_1fr]">
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase">Dzień tygodnia</label>
-                <Select value={String(dayOfWeek)} onValueChange={(v) => setDayOfWeek(Number(v) as Rule["dayOfWeek"])}>
-                  <SelectTrigger className="brutal-border"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {DAYS.map((d) => <SelectItem key={d.value} value={String(d.value)}>{d.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  Dni tygodnia <span className="text-muted-foreground">(można wybrać kilka)</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {DAYS.map((d) => {
+                    const active = daysOfWeek.includes(d.value as 1 | 2 | 3 | 4 | 5 | 6);
+                    return (
+                      <button
+                        key={d.value}
+                        type="button"
+                        onClick={() => {
+                          const v = d.value as 1 | 2 | 3 | 4 | 5 | 6;
+                          setDaysOfWeek(
+                            active ? daysOfWeek.filter((x) => x !== v) : [...daysOfWeek, v],
+                          );
+                        }}
+                        className={cn(
+                          "brutal-border rounded-md px-3 py-1.5 text-xs font-bold uppercase transition-transform",
+                          active
+                            ? "bg-primary text-primary-foreground brutal-shadow-sm -translate-x-0.5 -translate-y-0.5"
+                            : "bg-card text-foreground hover:bg-secondary",
+                        )}
+                        aria-pressed={active}
+                      >
+                        {d.label.slice(0, 3)}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase">Powtarzalność</label>

@@ -51,19 +51,27 @@ export function expandRule(rule: Rule, from: Date, to: Date): string[] {
     }
     return out;
   }
-  if (!rule.startDate || !rule.dayOfWeek || !rule.recurrence) return out;
-  const start = parseISO(rule.startDate);
-  // align start to its dayOfWeek (assume startDate already on right day)
-  let cursor = start;
-  // step until cursor >= from
+  if (!rule.startDate || !rule.recurrence) return out;
+  const days = (rule.daysOfWeek && rule.daysOfWeek.length > 0)
+    ? rule.daysOfWeek
+    : (rule.dayOfWeek ? [rule.dayOfWeek] : []);
+  if (days.length === 0) return out;
+
   const stepDays = recurrenceWeeks(rule.recurrence) * 7;
-  while (isBefore(cursor, from)) {
-    cursor = addDays(cursor, stepDays);
+  // Anchor on the Monday of the startDate's week so multi-day rules emit
+  // every selected weekday in each active week.
+  const start = parseISO(rule.startDate);
+  let weekAnchor = weekStart(start);
+  while (!isAfter(weekAnchor, to)) {
+    for (const dow of days) {
+      const occ = addDays(weekAnchor, dow - 1);
+      if (isBefore(occ, start)) continue;
+      if (isBefore(occ, from) || isAfter(occ, to)) continue;
+      out.push(fmtISO(occ));
+    }
+    weekAnchor = addDays(weekAnchor, stepDays);
   }
-  while (!isAfter(cursor, to)) {
-    out.push(fmtISO(cursor));
-    cursor = addDays(cursor, stepDays);
-  }
+  out.sort();
   return out;
 }
 
