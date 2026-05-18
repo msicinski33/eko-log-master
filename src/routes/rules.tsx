@@ -170,13 +170,22 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
   const [recurrence, setRecurrence] = useState<Recurrence>("1w");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [manualDates, setManualDates] = useState<Date[]>([]);
+  const [useCustomColor, setUseCustomColor] = useState(false);
+  const [color, setColor] = useState<string>("#FBBF24");
 
   function reset() {
     setName(""); setStartDate(undefined); setManualDates([]);
+    setUseCustomColor(false); setColor("#FBBF24");
   }
 
   function submit() {
     if (!name.trim()) return toast.error("Podaj nazwę rejonu");
+    const baseRule = {
+      id: uid("r"),
+      segment,
+      name: name.trim(),
+      color: useCustomColor ? color : undefined,
+    };
     if (mode === "recurring") {
       if (!startDate) return toast.error("Wybierz datę startową");
       const sd = new Date(startDate);
@@ -186,15 +195,15 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
         toast.warning("Data startowa nie pasuje do wybranego dnia tygodnia — będzie wyrównana.");
       }
       onAdd({
-        id: uid("r"),
-        segment, name: name.trim(), mode: "recurring",
+        ...baseRule,
+        mode: "recurring",
         dayOfWeek, recurrence, startDate: fmtISO(sd),
       });
     } else {
       if (manualDates.length === 0) return toast.error("Zaznacz co najmniej jedną datę");
       onAdd({
-        id: uid("r"),
-        segment, name: name.trim(), mode: "manual",
+        ...baseRule,
+        mode: "manual",
         dates: manualDates.map((d) => fmtISO(d)).sort(),
       });
     }
