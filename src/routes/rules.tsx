@@ -230,6 +230,48 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
         </div>
       </div>
 
+      <div className="mt-3 brutal-border rounded-md bg-secondary/40 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <label className="block text-xs font-bold uppercase">Kolor rejonu</label>
+            <p className="text-[11px] text-muted-foreground">
+              Domyślnie dopasowany ze słownika frakcji wg nazwy. Włącz, aby nadpisać.
+            </p>
+          </div>
+          <label className="flex items-center gap-2 text-xs font-bold uppercase">
+            <input
+              type="checkbox"
+              checked={useCustomColor}
+              onChange={(e) => setUseCustomColor(e.target.checked)}
+              className="h-4 w-4 brutal-border accent-primary"
+            />
+            Własny kolor
+          </label>
+        </div>
+        {useCustomColor && (
+          <div className="mt-3 flex items-center gap-3">
+            <input
+              type="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="h-10 w-14 cursor-pointer brutal-border rounded-md bg-transparent p-0"
+              aria-label="Wybierz kolor"
+            />
+            <Input
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="brutal-border font-mono uppercase w-32"
+              maxLength={7}
+            />
+            <div
+              className="h-10 flex-1 rounded-md brutal-border"
+              style={{ backgroundColor: color }}
+              aria-hidden
+            />
+          </div>
+        )}
+      </div>
+
       <div className="mt-4">
         <Tabs value={mode} onValueChange={(v) => setMode(v as Rule["mode"])}>
           <TabsList className="brutal-border bg-secondary">
