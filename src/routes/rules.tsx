@@ -114,7 +114,18 @@ function RulesPage() {
               )}
               {filtered.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell className="font-bold">{r.name}</TableCell>
+                  <TableCell className="font-bold">
+                    <span className="inline-flex items-center gap-2">
+                      {r.color && (
+                        <span
+                          className="inline-block h-4 w-4 rounded-sm brutal-border"
+                          style={{ backgroundColor: r.color }}
+                          aria-hidden
+                        />
+                      )}
+                      {r.name}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="brutal-border">
                       {r.segment === "residential" ? "Mieszkańcy" : "Firmy"}
@@ -170,13 +181,22 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
   const [recurrence, setRecurrence] = useState<Recurrence>("1w");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [manualDates, setManualDates] = useState<Date[]>([]);
+  const [useCustomColor, setUseCustomColor] = useState(false);
+  const [color, setColor] = useState<string>("#FBBF24");
 
   function reset() {
     setName(""); setStartDate(undefined); setManualDates([]);
+    setUseCustomColor(false); setColor("#FBBF24");
   }
 
   function submit() {
     if (!name.trim()) return toast.error("Podaj nazwę rejonu");
+    const baseRule = {
+      id: uid("r"),
+      segment,
+      name: name.trim(),
+      color: useCustomColor ? color : undefined,
+    };
     if (mode === "recurring") {
       if (!startDate) return toast.error("Wybierz datę startową");
       const sd = new Date(startDate);
@@ -186,15 +206,15 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
         toast.warning("Data startowa nie pasuje do wybranego dnia tygodnia — będzie wyrównana.");
       }
       onAdd({
-        id: uid("r"),
-        segment, name: name.trim(), mode: "recurring",
+        ...baseRule,
+        mode: "recurring",
         dayOfWeek, recurrence, startDate: fmtISO(sd),
       });
     } else {
       if (manualDates.length === 0) return toast.error("Zaznacz co najmniej jedną datę");
       onAdd({
-        id: uid("r"),
-        segment, name: name.trim(), mode: "manual",
+        ...baseRule,
+        mode: "manual",
         dates: manualDates.map((d) => fmtISO(d)).sort(),
       });
     }
@@ -219,6 +239,48 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="mt-3 brutal-border rounded-md bg-secondary/40 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <label className="block text-xs font-bold uppercase">Kolor rejonu</label>
+            <p className="text-[11px] text-muted-foreground">
+              Domyślnie dopasowany ze słownika frakcji wg nazwy. Włącz, aby nadpisać.
+            </p>
+          </div>
+          <label className="flex items-center gap-2 text-xs font-bold uppercase">
+            <input
+              type="checkbox"
+              checked={useCustomColor}
+              onChange={(e) => setUseCustomColor(e.target.checked)}
+              className="h-4 w-4 brutal-border accent-primary"
+            />
+            Własny kolor
+          </label>
+        </div>
+        {useCustomColor && (
+          <div className="mt-3 flex items-center gap-3">
+            <input
+              type="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="h-10 w-14 cursor-pointer brutal-border rounded-md bg-transparent p-0"
+              aria-label="Wybierz kolor"
+            />
+            <Input
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="brutal-border font-mono uppercase w-32"
+              maxLength={7}
+            />
+            <div
+              className="h-10 flex-1 rounded-md brutal-border"
+              style={{ backgroundColor: color }}
+              aria-hidden
+            />
+          </div>
+        )}
       </div>
 
       <div className="mt-4">

@@ -25,6 +25,7 @@ export type Occurrence = {
   segment: Segment;
   date: string; // ISO
   fraction?: Fraction;
+  color?: string;
   isHoliday?: boolean;
   movedFrom?: string;
   ruleMode: Rule["mode"];
@@ -124,6 +125,7 @@ function pushOcc(
     segment,
     date,
     fraction: resolveFraction(rule.name, fractions),
+    color: rule.color,
     isHoliday: isHolidayFor(date, segment, holidays),
     movedFrom,
     ruleMode: rule.mode,
