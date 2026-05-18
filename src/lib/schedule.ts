@@ -25,6 +25,7 @@ export type Occurrence = {
   segment: Segment;
   date: string; // ISO
   fraction?: Fraction;
+  color?: string;
   isHoliday?: boolean;
   movedFrom?: string;
   ruleMode: Rule["mode"];
