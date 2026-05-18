@@ -289,15 +289,37 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
           </TabsList>
 
           <TabsContent value="recurring" className="mt-3">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1fr_1fr]">
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase">Dzień tygodnia</label>
-                <Select value={String(dayOfWeek)} onValueChange={(v) => setDayOfWeek(Number(v) as Rule["dayOfWeek"])}>
-                  <SelectTrigger className="brutal-border"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {DAYS.map((d) => <SelectItem key={d.value} value={String(d.value)}>{d.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <label className="mb-1 block text-xs font-bold uppercase">
+                  Dni tygodnia <span className="text-muted-foreground">(można wybrać kilka)</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {DAYS.map((d) => {
+                    const active = daysOfWeek.includes(d.value as 1 | 2 | 3 | 4 | 5 | 6);
+                    return (
+                      <button
+                        key={d.value}
+                        type="button"
+                        onClick={() => {
+                          const v = d.value as 1 | 2 | 3 | 4 | 5 | 6;
+                          setDaysOfWeek(
+                            active ? daysOfWeek.filter((x) => x !== v) : [...daysOfWeek, v],
+                          );
+                        }}
+                        className={cn(
+                          "brutal-border rounded-md px-3 py-1.5 text-xs font-bold uppercase transition-transform",
+                          active
+                            ? "bg-primary text-primary-foreground brutal-shadow-sm -translate-x-0.5 -translate-y-0.5"
+                            : "bg-card text-foreground hover:bg-secondary",
+                        )}
+                        aria-pressed={active}
+                      >
+                        {d.label.slice(0, 3)}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase">Powtarzalność</label>
