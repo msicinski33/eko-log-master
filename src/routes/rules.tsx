@@ -199,16 +199,14 @@ function RuleForm({ onAdd }: { onAdd: (rule: Rule) => void }) {
     };
     if (mode === "recurring") {
       if (!startDate) return toast.error("Wybierz datę startową");
+      if (daysOfWeek.length === 0) return toast.error("Wybierz co najmniej jeden dzień tygodnia");
       const sd = new Date(startDate);
-      const desired = dayOfWeek!;
-      const current = sd.getDay() === 0 ? 7 : sd.getDay();
-      if (current !== desired) {
-        toast.warning("Data startowa nie pasuje do wybranego dnia tygodnia — będzie wyrównana.");
-      }
       onAdd({
         ...baseRule,
         mode: "recurring",
-        dayOfWeek, recurrence, startDate: fmtISO(sd),
+        daysOfWeek: [...daysOfWeek].sort((a, b) => a - b) as Rule["daysOfWeek"],
+        recurrence,
+        startDate: fmtISO(sd),
       });
     } else {
       if (manualDates.length === 0) return toast.error("Zaznacz co najmniej jedną datę");
