@@ -33,7 +33,7 @@ export function RouteCard({
   onClick?: () => void;
   draggable?: boolean;
 }) {
-  const color = occ.fraction?.color ?? "#6B7280";
+  const color = occ.color ?? occ.fraction?.color ?? "#6B7280";
   const id = `${occ.ruleId}__${occ.date}`;
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
