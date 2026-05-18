@@ -125,6 +125,7 @@ function pushOcc(
     segment,
     date,
     fraction: resolveFraction(rule.name, fractions),
+    color: rule.color,
     isHoliday: isHolidayFor(date, segment, holidays),
     movedFrom,
     ruleMode: rule.mode,
