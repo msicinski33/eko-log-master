@@ -114,7 +114,18 @@ function RulesPage() {
               )}
               {filtered.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell className="font-bold">{r.name}</TableCell>
+                  <TableCell className="font-bold">
+                    <span className="inline-flex items-center gap-2">
+                      {r.color && (
+                        <span
+                          className="inline-block h-4 w-4 rounded-sm brutal-border"
+                          style={{ backgroundColor: r.color }}
+                          aria-hidden
+                        />
+                      )}
+                      {r.name}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="brutal-border">
                       {r.segment === "residential" ? "Mieszkańcy" : "Firmy"}
