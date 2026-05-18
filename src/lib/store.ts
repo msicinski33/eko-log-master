@@ -16,6 +16,8 @@ export type Rule = {
   segment: Segment;
   name: string;
   mode: "recurring" | "manual";
+  /** Optional per-rule color override (hex). Falls back to fraction color. */
+  color?: string;
   // recurring
   dayOfWeek?: 1 | 2 | 3 | 4 | 5 | 6;
   recurrence?: Recurrence;
