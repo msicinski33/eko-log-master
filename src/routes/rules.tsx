@@ -138,7 +138,7 @@ function RulesPage() {
                   </TableCell>
                   <TableCell className="text-sm">
                     {r.mode === "recurring"
-                      ? `${DAYS.find((d) => d.value === r.dayOfWeek)?.label ?? "?"} • co ${r.recurrence?.replace("w", " tyg.")} • od ${r.startDate ? format(parseISO(r.startDate), "d MMM yyyy", { locale: pl }) : "?"}`
+                      ? `${((r.daysOfWeek && r.daysOfWeek.length > 0) ? r.daysOfWeek : (r.dayOfWeek ? [r.dayOfWeek] : [])).map((d) => DAYS.find((x) => x.value === d)?.label.slice(0, 3) ?? "?").join(", ")} • co ${r.recurrence?.replace("w", " tyg.")} • od ${r.startDate ? format(parseISO(r.startDate), "d MMM yyyy", { locale: pl }) : "?"}`
                       : `${r.dates?.length ?? 0} dat`}
                   </TableCell>
                   <TableCell className="font-mono">{countOccurrencesThisYear(r, overrides)}</TableCell>
