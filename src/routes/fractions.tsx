@@ -57,7 +57,8 @@ function FractionsPage() {
         <div>
           <h1 className="font-display text-3xl font-black uppercase tracking-tight">Słownik Frakcji</h1>
           <p className="text-sm text-muted-foreground">
-            Reguły kolorów oparte na nazwach tras. Dopasowanie: <code>nazwa.includes(wzorzec)</code>.
+            Reguły kolorów oparte na nazwach tras. Wzorzec może zawierać kilka aliasów rozdzielonych
+            przecinkiem (np. <code>zmieszane,zm</code>) — dopasuje też skróty typu „FMS – zm".
           </p>
         </div>
       </header>
