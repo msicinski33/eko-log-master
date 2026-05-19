@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RulesRouteImport } from './routes/rules'
+import { Route as PrintRouteImport } from './routes/print'
 import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as FractionsRouteImport } from './routes/fractions'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
   path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrintRoute = PrintRouteImport.update({
+  id: '/print',
+  path: '/print',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HolidaysRoute = HolidaysRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
   '/holidays': typeof HolidaysRoute
+  '/print': typeof PrintRoute
   '/rules': typeof RulesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
   '/holidays': typeof HolidaysRoute
+  '/print': typeof PrintRoute
   '/rules': typeof RulesRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/fractions': typeof FractionsRoute
   '/holidays': typeof HolidaysRoute
+  '/print': typeof PrintRoute
   '/rules': typeof RulesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fractions' | '/holidays' | '/rules'
+  fullPaths: '/' | '/fractions' | '/holidays' | '/print' | '/rules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fractions' | '/holidays' | '/rules'
-  id: '__root__' | '/' | '/fractions' | '/holidays' | '/rules'
+  to: '/' | '/fractions' | '/holidays' | '/print' | '/rules'
+  id: '__root__' | '/' | '/fractions' | '/holidays' | '/print' | '/rules'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FractionsRoute: typeof FractionsRoute
   HolidaysRoute: typeof HolidaysRoute
+  PrintRoute: typeof PrintRoute
   RulesRoute: typeof RulesRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/rules'
       fullPath: '/rules'
       preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/print': {
+      id: '/print'
+      path: '/print'
+      fullPath: '/print'
+      preLoaderRoute: typeof PrintRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/holidays': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FractionsRoute: FractionsRoute,
   HolidaysRoute: HolidaysRoute,
+  PrintRoute: PrintRoute,
   RulesRoute: RulesRoute,
 }
 export const routeTree = rootRouteImport

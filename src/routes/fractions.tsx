@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Trash2, Palette } from "lucide-react";
+import { Plus, Trash2, Palette, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { useFractions, uid, type Fraction } from "@/lib/store";
+import { useFractions, uid, DEFAULT_FRACTIONS, type Fraction } from "@/lib/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/fractions")({
@@ -57,10 +57,21 @@ function FractionsPage() {
         <div>
           <h1 className="font-display text-3xl font-black uppercase tracking-tight">Słownik Frakcji</h1>
           <p className="text-sm text-muted-foreground">
-            Reguły kolorów oparte na nazwach tras. Dopasowanie: <code>nazwa.includes(wzorzec)</code>.
-          </p>
-        </div>
-      </header>
+            Reguły kolorów oparte na nazwach tras. Wzorzec może zawierać kilka aliasów rozdzielonych
+            przecinkiem (np. <code>zmieszane,zm</code>) — dopasuje też skróty typu „FMS – zm".
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFractions(DEFAULT_FRACTIONS);
+              toast.success("Przywrócono frakcje domyślne");
+            }}
+            className="ml-auto brutal-border brutal-shadow-sm font-bold uppercase"
+          >
+            <RotateCcw className="mr-1 h-4 w-4" /> Przywróć domyślne
+          </Button>
+        </header>
 
       <Card className="brutal-border brutal-shadow rounded-md p-4">
         <h2 className="mb-3 font-display text-sm font-black uppercase tracking-widest">Dodaj wzorzec</h2>

@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { format, isSameDay, parseISO } from "date-fns";
+import { addDays, format, isSameDay, parseISO } from "date-fns";
 import { pl } from "date-fns/locale";
 import {
-  AlertTriangle, ChevronLeft, ChevronRight, Printer, Users, Building2, CalendarDays,
+  AlertTriangle, ChevronLeft, ChevronRight, Printer, Users, Building2, CalendarDays, CalendarRange,
 } from "lucide-react";
 import { DndContext, useDroppable, type DragEndEvent } from "@dnd-kit/core";
 
@@ -142,6 +142,8 @@ function Dashboard() {
           </Button>
         </div>
 
+        <PrintRangeButton segment={segment} defaultFrom={start} defaultTo={end} />
+
         <Button onClick={() => window.print()} className="brutal-border brutal-shadow bg-primary font-bold uppercase text-primary-foreground hover:bg-primary/90">
           <Printer className="mr-1 h-4 w-4" /> Drukuj tydzień
         </Button>
@@ -239,15 +241,86 @@ function DayColumn({
         </div>
         {isHoliday && <AlertTriangle className="h-4 w-4" strokeWidth={3} />}
       </button>
-      <div className="relative z-[1] flex flex-1 flex-col gap-1.5 p-1.5">
+      <div className="relative z-[1] flex flex-1 flex-col gap-1 p-1.5">
         {items.length === 0 && (
           <div className="my-auto text-center text-[10px] uppercase text-muted-foreground">— brak —</div>
         )}
         {items.map((o) => (
-          <RouteCard key={`${o.ruleId}-${o.date}`} occ={o} onClick={() => onCardClick(o)} />
+          <RouteCard key={`${o.ruleId}-${o.date}`} occ={o} onClick={() => onCardClick(o)} compact />
         ))}
       </div>
     </div>
+  );
+}
+
+function PrintRangeButton({
+  segment, defaultFrom, defaultTo,
+}: { segment: Segment; defaultFrom: Date; defaultTo: Date }) {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [from, setFrom] = useState<Date | undefined>(defaultFrom);
+  const [to, setTo] = useState<Date | undefined>(addDays(defaultTo, 21));
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="brutal-border brutal-shadow-sm font-bold uppercase">
+          <CalendarRange className="mr-1 h-4 w-4" /> Drukuj zakres
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="brutal-border brutal-shadow">
+        <DialogHeader>
+          <DialogTitle className="font-display uppercase">Drukuj zakres dat</DialogTitle>
+          <DialogDescription>
+            Wybierz datę początkową i końcową. Wydruk będzie kompaktowy (lista dni z trasami).
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-xs font-bold uppercase">Od</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start brutal-border">
+                  {from ? format(from, "d MMM yyyy", { locale: pl }) : "Wybierz"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 brutal-border" align="start">
+                <Calendar mode="single" selected={from} onSelect={setFrom} initialFocus className={cn("p-3 pointer-events-auto")} locale={pl} />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-bold uppercase">Do</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start brutal-border">
+                  {to ? format(to, "d MMM yyyy", { locale: pl }) : "Wybierz"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 brutal-border" align="start">
+                <Calendar mode="single" selected={to} onSelect={setTo} initialFocus className={cn("p-3 pointer-events-auto")} locale={pl} />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)} className="brutal-border">Anuluj</Button>
+          <Button
+            disabled={!from || !to}
+            onClick={() => {
+              if (!from || !to) return;
+              navigate({
+                to: "/print",
+                search: { from: fmtISO(from), to: fmtISO(to), segment },
+              });
+            }}
+            className="brutal-border brutal-shadow bg-primary font-bold uppercase text-primary-foreground"
+          >
+            <Printer className="mr-1 h-4 w-4" /> Otwórz wydruk
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

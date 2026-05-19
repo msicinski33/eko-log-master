@@ -28,10 +28,12 @@ export function RouteCard({
   occ,
   onClick,
   draggable = true,
+  compact = false,
 }: {
   occ: Occurrence;
   onClick?: () => void;
   draggable?: boolean;
+  compact?: boolean;
 }) {
   const color = occ.color ?? occ.fraction?.color ?? "#6B7280";
   const id = `${occ.ruleId}__${occ.date}`;
@@ -49,6 +51,49 @@ export function RouteCard({
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     opacity: isDragging ? 0.4 : 1,
   };
+
+  if (compact) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        title={`${occ.ruleName} — ${occ.fraction?.label ?? "Bez frakcji"}${occ.movedFrom ? " (przeniesiono)" : ""}`}
+        className={cn(
+          "route-card group relative flex h-6 cursor-pointer select-none items-center gap-1 rounded-sm border-2 px-1.5 brutal-shadow-sm transition-transform",
+          "hover:-translate-x-0.5 hover:-translate-y-0.5",
+        )}
+        onClick={onClick}
+      >
+        {draggable && (
+          <button
+            {...listeners}
+            {...attributes}
+            onClick={(e) => e.stopPropagation()}
+            className="touch-none cursor-grab opacity-50 hover:opacity-100"
+            aria-label="Przeciągnij"
+          >
+            <GripVertical className="h-3 w-3" strokeWidth={2.5} />
+          </button>
+        )}
+        <span
+          className="inline-block h-2 w-2 shrink-0 rounded-[2px] border border-black"
+          style={{ backgroundColor: color }}
+        />
+        <span className="min-w-0 flex-1 truncate font-display text-[11px] font-black uppercase leading-none">
+          {occ.ruleName}
+        </span>
+        {occ.movedFrom && (
+          <ArrowRightLeft className="h-2.5 w-2.5 opacity-70" />
+        )}
+        {occ.isHoliday && (
+          <AlertTriangle className="h-3 w-3 text-accent" strokeWidth={3} />
+        )}
+        <span className="rounded-sm bg-black/40 px-1 py-px text-[8px] font-bold text-white">
+          {occ.segment === "residential" ? "M" : "F"}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
