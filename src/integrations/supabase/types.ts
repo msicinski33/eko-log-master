@@ -14,7 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ekolog_state: {
+        Row: {
+          id: string
+          updated_at: string
+          state: Json
+        }
+        Insert: {
+          id: string
+          updated_at?: string
+          state: Json
+        }
+        Update: {
+          id?: string
+          updated_at?: string
+          state?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
