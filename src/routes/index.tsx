@@ -142,6 +142,8 @@ function Dashboard() {
           </Button>
         </div>
 
+        <PrintRangeButton segment={segment} defaultFrom={start} defaultTo={end} />
+
         <Button onClick={() => window.print()} className="brutal-border brutal-shadow bg-primary font-bold uppercase text-primary-foreground hover:bg-primary/90">
           <Printer className="mr-1 h-4 w-4" /> Drukuj tydzień
         </Button>
