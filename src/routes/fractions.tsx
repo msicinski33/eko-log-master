@@ -59,9 +59,19 @@ function FractionsPage() {
           <p className="text-sm text-muted-foreground">
             Reguły kolorów oparte na nazwach tras. Wzorzec może zawierać kilka aliasów rozdzielonych
             przecinkiem (np. <code>zmieszane,zm</code>) — dopasuje też skróty typu „FMS – zm".
-          </p>
-        </div>
-      </header>
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFractions(DEFAULT_FRACTIONS);
+              toast.success("Przywrócono frakcje domyślne");
+            }}
+            className="ml-auto brutal-border brutal-shadow-sm font-bold uppercase"
+          >
+            <RotateCcw className="mr-1 h-4 w-4" /> Przywróć domyślne
+          </Button>
+        </header>
 
       <Card className="brutal-border brutal-shadow rounded-md p-4">
         <h2 className="mb-3 font-display text-sm font-black uppercase tracking-widest">Dodaj wzorzec</h2>
