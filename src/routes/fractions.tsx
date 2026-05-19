@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Trash2, Palette } from "lucide-react";
+import { Plus, Trash2, Palette, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { useFractions, uid, type Fraction } from "@/lib/store";
+import { useFractions, uid, DEFAULT_FRACTIONS, type Fraction } from "@/lib/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/fractions")({
