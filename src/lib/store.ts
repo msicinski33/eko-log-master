@@ -52,10 +52,12 @@ const KEYS = {
 
 export const DEFAULT_FRACTIONS: Fraction[] = [
   { id: "f-bio", pattern: "bio", color: "#7CB342", label: "BIO" },
-  { id: "f-zmie", pattern: "zmieszane", color: "#212121", label: "Zmieszane" },
-  { id: "f-plast", pattern: "plastik", color: "#FFC107", label: "Plastik / Metal" },
-  { id: "f-pap", pattern: "papier", color: "#1976D2", label: "Papier" },
-  { id: "f-szk", pattern: "szkło", color: "#43A047", label: "Szkło" },
+  { id: "f-zmie", pattern: "zmieszane,zm,zmie", color: "#212121", label: "Zmieszane" },
+  { id: "f-plast", pattern: "plastik,plast,pl,metal,tworzywa", color: "#FFC107", label: "Plastik / Metal" },
+  { id: "f-pap", pattern: "papier,pap", color: "#1976D2", label: "Papier" },
+  { id: "f-szk", pattern: "szkło,szklo,szk", color: "#43A047", label: "Szkło" },
+  { id: "f-popiol", pattern: "popiół,popiol,pop", color: "#6D4C41", label: "Popiół" },
+  { id: "f-gabar", pattern: "gabaryt,gab", color: "#8E24AA", label: "Gabaryty" },
 ];
 
 function read<T>(key: string, fallback: T): T {
